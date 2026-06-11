@@ -46,16 +46,46 @@ Dashboard verschwindet dann und der echte Login ist aktiv.
 
 ---
 
-## Schritt 3 – Erste Kundin anlegen (~2 Min)
+## Schritt 2b – Datenbank-Tabellen anlegen (~2 Min)
 
-Solange es noch keine Self-Service-Registrierung gibt, legst du Logins selbst an:
+Damit Julia Teilnehmern Aufgaben zuweisen kann, brauchen wir zwei Tabellen
+(Profile + Aufgaben) inkl. Sicherheitsregeln. Das ist alles in einer Datei
+vorbereitet:
 
-1. In Supabase links auf **Authentication** → **Users**.
-2. **Add user** → **Create new user**.
-3. E-Mail + Passwort der Kundin eintragen, **Auto Confirm User** aktivieren.
-4. Diese Zugangsdaten gibst du der Kundin – sie kann sich sofort einloggen.
+1. In Supabase links auf **SQL Editor** → **New query**.
+2. Öffne im Projekt die Datei **`supabase/schema.sql`**, kopiere den **kompletten
+   Inhalt** und füge ihn im SQL-Editor ein.
+3. Klick **Run** (unten rechts). Es sollte „Success" erscheinen.
 
-(Optional, später: E-Mail-Einladungen, Passwort-zurücksetzen, Selbstregistrierung.)
+> Damit existieren die Tabellen `profiles` und `tasks` mit Row-Level-Security:
+> Jeder Teilnehmer sieht nur seine eigenen Aufgaben, der Coach sieht und vergibt
+> alle.
+
+---
+
+## Schritt 3 – Zugänge anlegen (~3 Min)
+
+Logins legst du selbst an (kein offenes Self-Service):
+
+1. In Supabase links auf **Authentication** → **Users** → **Add user** →
+   **Create new user**.
+2. E-Mail + Passwort eintragen, **Auto Confirm User** aktivieren.
+3. Diese Zugangsdaten gibst du dem Teilnehmer – er kann sich sofort einloggen.
+
+**Julia als Coach freischalten** (einmalig, damit sie den Coach-Bereich sieht):
+
+1. Lege zuerst (wie oben) einen Nutzer mit **Julias** E-Mail an.
+2. Geh in den **SQL Editor** → **New query** und führe aus
+   (Julias E-Mail einsetzen):
+
+   ```sql
+   update public.profiles
+   set role = 'coach'
+   where id = (select id from auth.users where email = 'julia@beispiel.de');
+   ```
+
+3. Fertig: Wenn Julia sich einloggt, sieht sie oben rechts den Button
+   **„Coach-Bereich"** und kann dort jedem Teilnehmer Aufgaben zuweisen.
 
 ---
 

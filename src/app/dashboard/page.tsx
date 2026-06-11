@@ -4,10 +4,13 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseConfigured } from "@/lib/supabase/config";
 import { heroFirstName, modules } from "@/lib/journey";
 import TaskList from "@/components/TaskList";
+import AssignedTasks, { type AssignedTask } from "@/components/AssignedTasks";
 import Logbook from "@/components/Logbook";
 
 export default async function DashboardPage() {
   let name = heroFirstName;
+  let isCoach = false;
+  let assignedTasks: AssignedTask[] | null = null;
 
   if (supabaseConfigured) {
     const supabase = await createClient();
@@ -18,6 +21,23 @@ export default async function DashboardPage() {
       (user?.user_metadata?.first_name as string) ??
       user?.email?.split("@")[0] ??
       heroFirstName;
+
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("first_name, role")
+        .eq("id", user.id)
+        .single();
+      if (profile?.first_name) name = profile.first_name;
+      isCoach = profile?.role === "coach";
+
+      const { data: tasks } = await supabase
+        .from("tasks")
+        .select("id, title, detail, status")
+        .eq("member_id", user.id)
+        .order("created_at", { ascending: true });
+      assignedTasks = (tasks ?? []) as AssignedTask[];
+    }
   }
 
   return (
@@ -27,14 +47,24 @@ export default async function DashboardPage() {
         <span className="text-xs uppercase tracking-[0.3em] text-accent">
           Julia Sikira · Dein Coaching
         </span>
-        <form action={logout}>
-          <button
-            type="submit"
-            className="rounded-lg border border-border px-3 py-1.5 text-xs text-muted transition hover:border-primary hover:text-foreground"
-          >
-            Abmelden
-          </button>
-        </form>
+        <div className="flex items-center gap-2">
+          {isCoach && (
+            <Link
+              href="/coach"
+              className="rounded-lg border border-accent/50 bg-accent/10 px-3 py-1.5 text-xs font-semibold text-accent transition hover:bg-accent/20"
+            >
+              Coach-Bereich
+            </Link>
+          )}
+          <form action={logout}>
+            <button
+              type="submit"
+              className="rounded-lg border border-border px-3 py-1.5 text-xs text-muted transition hover:border-primary hover:text-foreground"
+            >
+              Abmelden
+            </button>
+          </form>
+        </div>
       </div>
 
       {/* Begrüßung */}
@@ -93,7 +123,7 @@ export default async function DashboardPage() {
       <div className="grid gap-8 lg:grid-cols-[1.5fr_1fr]">
         {/* Linke Spalte: Aufgaben + Werkzeugkasten */}
         <div className="space-y-8">
-          <TaskList />
+          {assignedTasks ? <AssignedTasks tasks={assignedTasks} /> : <TaskList />}
 
           {/* Werkzeugkasten-Teaser */}
           <section className="rounded-2xl border border-border bg-surface p-6">
