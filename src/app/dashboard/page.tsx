@@ -127,14 +127,14 @@ export default async function DashboardPage() {
         </div>
         <div className="relative flex-1">
           <div className="flex items-center gap-2">
-            <h2 className="text-xl text-foreground">Leo · Dein KI-Wingman</h2>
+            <h2 className="text-xl text-foreground">Julia · Dein KI-Coach</h2>
             <span className="rounded-full bg-accent/15 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent">
               24/7
             </span>
           </div>
           <p className="mt-1 text-sm text-muted">
-            Festgefahren bei einem Match, Date oder einer Nachricht? Frag Leo –
-            er ist jederzeit für dich da.
+            Festgefahren bei einem Match, Date oder einer Nachricht? Frag Julia
+            – sie ist jederzeit für dich da.
           </p>
         </div>
         <span className="relative shrink-0 rounded-xl bg-accent px-4 py-2.5 font-display tracking-wide text-white transition group-hover:bg-accent-soft">

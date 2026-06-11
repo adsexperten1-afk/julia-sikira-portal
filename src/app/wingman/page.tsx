@@ -14,7 +14,7 @@ const SUGGESTIONS = [
 const GREETING: ChatMessage = {
   role: "assistant",
   content:
-    "Hey, ich bin Leo – dein Wingman. 💪 Ich bin rund um die Uhr für dich da, zwischen deinen Sessions mit Julia. Erzähl mir, was gerade ansteht: ein Match, ein Date, eine Nachricht? Lass uns das zusammen angehen.",
+    "Hey, schön dass du da bist – ich bin Julia. 💙 Ich bin rund um die Uhr für dich da, zwischen unseren persönlichen Sessions. Erzähl mir, was gerade ansteht: ein Match, ein Date, eine Nachricht? Lass uns das zusammen angehen.",
 };
 
 export default function WingmanPage() {
@@ -99,9 +99,9 @@ export default function WingmanPage() {
           🤝
         </div>
         <div className="leading-tight">
-          <h1 className="text-2xl text-foreground">Leo · Dein Wingman</h1>
+          <h1 className="text-2xl text-foreground">Julia · Dein KI-Coach</h1>
           <p className="text-sm text-muted">
-            24/7 an deiner Seite – zwischen den Sessions mit Julia.
+            24/7 an deiner Seite – zwischen euren persönlichen Sessions.
           </p>
         </div>
       </header>
@@ -168,7 +168,7 @@ export default function WingmanPage() {
             }
           }}
           rows={1}
-          placeholder="Schreib Leo, was gerade ansteht …"
+          placeholder="Schreib Julia, was gerade ansteht …"
           className="max-h-40 flex-1 resize-none rounded-xl border border-border bg-surface-2 px-4 py-3 text-foreground outline-none transition placeholder:text-muted focus:border-primary focus:ring-2 focus:ring-primary/30"
         />
         <button
