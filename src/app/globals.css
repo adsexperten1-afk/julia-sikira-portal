@@ -1,26 +1,71 @@
 @import "tailwindcss";
 
+/*
+  Branding – Julia Sikira Datingcoaching "Heldenreise"
+  Dark & sportlich: dunkler Hintergrund, Elektroblau als Action,
+  Orange als Energie/Erfolg. Farben zentral hier ändern.
+*/
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --background: #0b0e14; /* Anthrazit-Navy, fast schwarz */
+  --surface: #141925; /* Karten */
+  --surface-2: #1c2230; /* erhöhte Flächen */
+  --foreground: #eef2f8; /* helles Off-White */
+  --muted: #8b95a7; /* gedämpfter Text */
+
+  --primary: #2e7dff; /* Elektroblau – Aktion */
+  --primary-soft: #5b9bff; /* heller Hover */
+  --accent: #ff7a1a; /* Energie-Orange – XP, Streak, Erfolg */
+  --accent-soft: #ffb072; /* helles Orange */
+
+  --border: #262d3b;
+  --success: #2ecf7e; /* Grün – erledigt */
+  --locked: #3a4252; /* gesperrte Etappen */
 }
 
 @theme inline {
   --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-muted: var(--muted);
+  --color-primary: var(--primary);
+  --color-primary-soft: var(--primary-soft);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-border: var(--border);
+  --color-success: var(--success);
+  --color-locked: var(--locked);
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
+  --font-display: var(--font-oswald);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display), "Arial Narrow", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+/* sanftes Pulsieren für die aktuelle Etappe */
+@keyframes pulse-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 125, 255, 0.45);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(46, 125, 255, 0);
+  }
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }

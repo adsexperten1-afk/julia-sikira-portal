@@ -1,7 +1,10 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Projektordner als Root festlegen (es liegt noch eine package-lock.json im Home-Verzeichnis).
+  turbopack: {
+    root: __dirname,
+  },
 };
 
 export default nextConfig;
