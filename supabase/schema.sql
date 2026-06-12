@@ -18,11 +18,12 @@ create table if not exists public.tasks (
   title       text not null,
   detail      text,
   status      text not null default 'open' check (status in ('open','done')),
+  position    integer not null default 0,   -- Reihenfolge in der Roadmap
   created_at  timestamptz not null default now(),
   done_at     timestamptz
 );
 
-create index if not exists tasks_member_idx on public.tasks(member_id);
+create index if not exists tasks_member_idx on public.tasks(member_id, position);
 
 -- ---- Beim Registrieren automatisch ein Profil anlegen ----------------
 create or replace function public.handle_new_user()

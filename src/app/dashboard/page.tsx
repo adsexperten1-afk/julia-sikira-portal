@@ -35,7 +35,7 @@ export default async function DashboardPage() {
         .from("tasks")
         .select("id, title, detail, status")
         .eq("member_id", user.id)
-        .order("created_at", { ascending: true });
+        .order("position", { ascending: true });
       assignedTasks = (tasks ?? []) as AssignedTask[];
     }
   }

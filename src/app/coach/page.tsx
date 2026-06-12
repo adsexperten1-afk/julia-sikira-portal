@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { supabaseConfigured } from "@/lib/supabase/config";
 import { deleteTask } from "@/app/actions/tasks";
 import AddTaskForm from "@/components/AddTaskForm";
+import MoveTaskButtons from "@/components/MoveTaskButtons";
 
 type Member = { id: string; first_name: string | null };
 type Task = {
@@ -11,7 +12,7 @@ type Task = {
   title: string;
   detail: string | null;
   status: "open" | "done";
-  created_at: string;
+  position: number;
 };
 
 export default async function CoachPage({
@@ -66,9 +67,9 @@ export default async function CoachPage({
   if (selected) {
     const { data } = await supabase
       .from("tasks")
-      .select("id, title, detail, status, created_at")
+      .select("id, title, detail, status, position")
       .eq("member_id", selected.id)
-      .order("created_at", { ascending: false });
+      .order("position", { ascending: true });
     tasks = (data ?? []) as Task[];
   }
 
@@ -136,21 +137,33 @@ export default async function CoachPage({
               <AddTaskForm memberId={selected.id} />
 
               <div>
-                <h2 className="mb-3 text-xl text-foreground">
-                  Aufgaben von {selected.first_name || "Teilnehmer"}
+                <h2 className="mb-1 text-xl text-foreground">
+                  Roadmap von {selected.first_name || "Teilnehmer"}
                 </h2>
+                <p className="mb-3 text-sm text-muted">
+                  Die Reihenfolge ist der Weg, den der Teilnehmer sieht. Mit den
+                  Pfeilen verschiebst du die Stationen.
+                </p>
                 {tasks.length === 0 ? (
                   <p className="rounded-xl border border-border bg-surface-2 p-4 text-sm text-muted">
-                    Noch keine Aufgaben zugewiesen.
+                    Noch keine Stationen. Leg oben die erste Aufgabe an.
                   </p>
                 ) : (
                   <ul className="space-y-2.5">
-                    {tasks.map((t) => (
+                    {tasks.map((t, i) => (
                       <li
                         key={t.id}
-                        className="flex items-start justify-between gap-3 rounded-xl border border-border bg-surface-2 p-3"
+                        className="flex items-start gap-3 rounded-xl border border-border bg-surface-2 p-3"
                       >
-                        <div>
+                        <MoveTaskButtons
+                          id={t.id}
+                          isFirst={i === 0}
+                          isLast={i === tasks.length - 1}
+                        />
+                        <span className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-border text-xs font-bold text-muted">
+                          {i + 1}
+                        </span>
+                        <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <span
                               className={`rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider ${

@@ -35,10 +35,22 @@ export async function createTask(
   if (!title) return { error: "Bitte gib der Aufgabe einen Titel." };
 
   const supabase = await createClient();
+
+  // Neue Station hinten an die Roadmap anhängen: höchste Position + 1.
+  const { data: last } = await supabase
+    .from("tasks")
+    .select("position")
+    .eq("member_id", memberId)
+    .order("position", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  const nextPosition = (last?.position ?? -1) + 1;
+
   const { error } = await supabase.from("tasks").insert({
     member_id: memberId,
     title,
     detail: detail || null,
+    position: nextPosition,
   });
 
   if (error) return { error: "Konnte nicht speichern: " + error.message };
@@ -46,6 +58,48 @@ export async function createTask(
   revalidatePath("/coach");
   revalidatePath("/dashboard");
   return { success: true };
+}
+
+// Coach verschiebt eine Station in der Roadmap nach oben/unten.
+export async function moveTask(id: string, direction: "up" | "down") {
+  if (!supabaseConfigured) return;
+  const supabase = await createClient();
+
+  // Die zu verschiebende Aufgabe laden.
+  const { data: current } = await supabase
+    .from("tasks")
+    .select("id, member_id, position")
+    .eq("id", id)
+    .single();
+  if (!current) return;
+
+  // Den direkten Nachbarn in Bewegungsrichtung finden.
+  const { data: neighbor } = await supabase
+    .from("tasks")
+    .select("id, position")
+    .eq("member_id", current.member_id)
+    .order("position", { ascending: direction === "down" })
+    .filter(
+      "position",
+      direction === "up" ? "lt" : "gt",
+      current.position,
+    )
+    .limit(1)
+    .maybeSingle();
+  if (!neighbor) return; // schon ganz oben bzw. unten
+
+  // Positionen tauschen.
+  await supabase
+    .from("tasks")
+    .update({ position: neighbor.position })
+    .eq("id", current.id);
+  await supabase
+    .from("tasks")
+    .update({ position: current.position })
+    .eq("id", neighbor.id);
+
+  revalidatePath("/coach");
+  revalidatePath("/dashboard");
 }
 
 // Coach löscht eine Aufgabe wieder.
